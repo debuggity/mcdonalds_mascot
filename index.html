@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <title>11/18 Mascot Preview</title>
     <!-- Google Font for better Unicode support -->
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans&family=Great+Vibes&display=swap" rel="stylesheet">
+    
     <style>
         /* Background color */
         body {
@@ -44,6 +45,7 @@
             font-family: 'Noto Sans', 'Comic Sans MS', cursive;
             color: #fff;
             z-index: 10;
+            user-select: none; /* Prevents text selection */
         }
 
         /* Twitter link styling */
@@ -75,7 +77,7 @@
 
         /* Buy button styling */
         .buy-button {
-            margin-right: 40px;
+            margin-right: 20px;
             margin-top: 20px;
             width: 150px;
             position: absolute;
@@ -91,11 +93,13 @@
             cursor: pointer;
             transition: transform 0.2s;
             z-index: 10;
+            font-weight: 500;
             text-align: center;
             text-decoration: none; /* Remove underline */
         }
 
         .buy-button:hover {
+            font-weight: 600;
             transform: scale(1.1);
         }
 
@@ -106,6 +110,57 @@
             left: 0;
             pointer-events: none;
             z-index: 5;
+        }
+
+        /* Text reveal styling */
+        .text-reveal {
+            position: absolute;
+            bottom: 20px;
+            width: 100%;
+            text-align: center;
+            font-family: 'Noto Sans', 'Comic Sans MS', Arial, sans-serif;
+            font-size: 2em;
+            color: #fff;
+            z-index: 10;
+            letter-spacing: 0.1em;
+            user-select: none; /* Prevents text selection */
+        }
+
+        .text-reveal span {
+            opacity: 0;
+            animation: fadeIn 0.5s forwards;
+        }
+
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+            }
+        }
+
+        /* Responsive styling */
+        @media (max-width: 768px) {
+            video {
+                max-width: 100%;
+                max-height: 100%;
+            }
+
+            .title {
+                font-size: 1em;
+                margin-left: 10px;
+                margin-top: 10px;
+            }
+
+            .buy-button {
+                width: 100px;
+                font-size: 1em;
+                padding: 8px 16px;
+                margin-right: 10px;
+                margin-top: 10px;
+            }
+
+            .text-reveal {
+                font-size: 1.5em;
+            }
         }
     </style>
 </head>
@@ -121,12 +176,15 @@
 
         <!-- Buy Button -->
         <a href="https://jup.ag/swap/SOL-GRPCZZzvLPweJsYxgjVoXPfEYbxxW6Fda54Rx9aWpump" target="_blank" class="buy-button">BUY • ᴗ •</a>
+
+        <!-- Text Reveal -->
+        <div class="text-reveal"></div>
     </div>
 
     <!-- Canvas for Coffee Trail -->
     <canvas id="coffeeTrailCanvas"></canvas>
 
-    <!-- JavaScript for Coffee Trail Effect -->
+    <!-- JavaScript for Coffee Trail Effect and Text Reveal -->
     <script>
         const canvas = document.getElementById('coffeeTrailCanvas');
         const ctx = canvas.getContext('2d');
@@ -198,6 +256,20 @@
         }
 
         updateDrops();
+
+        // Text Reveal Animation
+        const textReveal = document.querySelector('.text-reveal');
+        const text = "McDonald's new mascot?!";
+        const chars = text.split('');
+
+        chars.forEach((char, index) => {
+            const span = document.createElement('span');
+            span.textContent = char;
+            span.style.opacity = '0';
+            span.style.animation = `fadeIn 0.5s forwards`;
+            span.style.animationDelay = `${index * 0.1}s`;
+            textReveal.appendChild(span);
+        });
     </script>
 </body>
 </html>
