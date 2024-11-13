@@ -13,15 +13,18 @@
             color: #fff;
             margin: 0;
             font-family: 'Noto Sans', Arial, sans-serif;
-            overflow: hidden;
-            position: relative; /* Ensure positioning context for absolute elements */
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
         }
 
         /* Centered video styling */
         .video-container {
             position: relative;
             width: 100%;
-            height: 100vh;
+            min-height: 100vh;
+            padding-bottom: 120px; /* Add padding at bottom to prevent overlap */
+            box-sizing: border-box;
         }
 
         video {
@@ -30,7 +33,7 @@
             left: 50%;
             transform: translate(-50%, -50%);
             max-width: 80%;
-            max-height: 80%;
+            max-height: 70vh; /* Reduced to make room for bottom elements */
             border-radius: 12px;
         }
 
@@ -181,11 +184,16 @@
             background-image: url('dex.webp');
         }
 
-        /* Responsive styling */
+        /* Updated media queries */
         @media (max-width: 900px) {
+            .video-container {
+                padding-bottom: 150px; /* Increased padding for mobile */
+            }
+
             video {
-                max-width: 100%;
-                max-height: 100%;
+                max-width: 95%;
+                max-height: 60vh; /* Reduced further for mobile */
+                margin-top: -40px; /* Move video up slightly */
             }
 
             .title {
@@ -203,20 +211,47 @@
             }
 
             .text-reveal {
-                padding-bottom: 5px;
-                font-size: 1.5em;
-                bottom: 80px; /* Ensure space above social icons */
+                font-size: 1.2em;
+                bottom: 100px; /* Adjusted position */
+                width: 90%;
+                left: 50%;
+                transform: translateX(-50%);
+                white-space: normal;
+                word-wrap: break-word;
             }
 
-            /* Adjust social icons for smaller screens */
             .social-icons {
-                gap: 10px;
-                bottom: 35px;
+                gap: 20px;
+                bottom: 30px;
+                width: 100%;
+                justify-content: center;
+                padding: 10px 0;
             }
 
             .social-icon {
-                width: 30px;
-                height: 30px;
+                width: 35px;
+                height: 35px;
+            }
+        }
+
+        /* Additional mobile optimization */
+        @media (max-height: 700px) {
+            .video-container {
+                padding-bottom: 180px;
+            }
+
+            video {
+                max-height: 50vh;
+                margin-top: -20px;
+            }
+
+            .text-reveal {
+                bottom: 90px;
+                font-size: 1.1em;
+            }
+
+            .social-icons {
+                bottom: 20px;
             }
         }
     </style>
