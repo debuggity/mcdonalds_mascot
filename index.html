@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>11/18 Mascot Preview</title>
+    <style>
+        /* Background color */
+        body {
+            background-color: #a39eee;
+            color: #fff;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            overflow: hidden;
+        }
+
+        /* Centered video styling */
+        .video-container {
+            position: relative;
+            width: 100%;
+            height: 100vh;
+        }
+
+        video {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            max-width: 80%;
+            max-height: 80%;
+            border-radius: 12px;
+        }
+
+        /* Title styling */
+        .title {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            font-size: 1.5em;
+            font-weight: bold;
+            font-family: 'Comic Sans MS', cursive;
+            color: #fff;
+            z-index: 10;
+        }
+
+        /* Twitter link styling */
+        .twitter-link {
+            color: #fff;
+            text-decoration: none;
+            font-size: 1em;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        /* Geometric shadow on hover */
+        .twitter-link::after {
+            content: '';
+            position: absolute;
+            left: -5px;
+            top: -5px;
+            width: calc(100% + 10px);
+            height: calc(100% + 10px);
+            background: transparent;
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            transform: skew(-10deg, -10deg);
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+
+        .twitter-link:hover::after {
+            opacity: 1;
+        }
+
+        /* Buy button styling */
+        .buy-button {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background-color: #fff;
+            color: #a39eee;
+            border: none;
+            padding: 10px 20px;
+            font-size: 1.5em;
+            font-family: 'Comic Sans MS', cursive;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: transform 0.2s;
+            z-index: 10;
+            text-decoration: none; /* Remove underline */
+        }
+
+        .buy-button:hover {
+            transform: scale(1.1);
+        }
+
+        /* Canvas for coffee trail */
+        #coffeeTrailCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            z-index: 5;
+        }
+    </style>
+</head>
+<body>
+    <div class="video-container">
+        <!-- Title and Twitter Handle -->
+        <div class="title">• ᴗ • 11/18<br>
+            <a class="twitter-link" href="https://twitter.com/McDNewMascot" target="_blank">@McDNewMascot</a>
+        </div>
+
+        <!-- Video -->
+        <video src="video.mp4" autoplay muted loop></video>
+
+        <!-- Buy Button -->
+        <a href="https://jup.ag/swap/SOL-GRPCZZzvLPweJsYxgjVoXPfEYbxxW6Fda54Rx9aWpump" target="_blank" class="buy-button">BUY • ᴗ •</a>
+    </div>
+
+    <!-- Canvas for Coffee Trail -->
+    <canvas id="coffeeTrailCanvas"></canvas>
+
+    <!-- JavaScript for Coffee Trail Effect -->
+    <script>
+        const canvas = document.getElementById('coffeeTrailCanvas');
+        const ctx = canvas.getContext('2d');
+        let drops = [];
+
+        // Resize canvas
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        // Mouse position
+        let mouseX = 0;
+        let mouseY = 0;
+
+        window.addEventListener('mousemove', function(e) {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+            createDrop(mouseX, mouseY);
+        });
+
+        function createDrop(x, y) {
+            drops.push({
+                x: x,
+                y: y,
+                size: Math.random() * 5 + 5,
+                opacity: 1,
+                speedY: Math.random() * 2 + 1,
+                speedX: (Math.random() - 0.5) * 2
+            });
+        }
+
+        function updateDrops() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            for (let i = 0; i < drops.length; i++) {
+                let d = drops[i];
+                d.y += d.speedY;
+                d.x += d.speedX;
+                d.opacity -= 0.01;
+                d.size -= 0.05;
+
+                if (d.opacity <= 0 || d.size <= 0) {
+                    drops.splice(i, 1);
+                    i--;
+                    continue;
+                }
+
+                ctx.beginPath();
+                ctx.arc(d.x, d.y, d.size, 0, Math.PI * 2);
+                ctx.fillStyle = 'rgba(111, 78, 55,' + d.opacity + ')'; // Coffee color
+                ctx.fill();
+            }
+
+            requestAnimationFrame(updateDrops);
+        }
+
+        updateDrops();
+    </script>
+</body>
+</html>
