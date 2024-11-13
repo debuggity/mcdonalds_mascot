@@ -3,13 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <title>11/18 Mascot Preview</title>
+    <!-- Google Font for better Unicode support -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans&display=swap" rel="stylesheet">
     <style>
         /* Background color */
         body {
             background-color: #a39eee;
             color: #fff;
             margin: 0;
-            font-family: Arial, sans-serif;
+            font-family: 'Noto Sans', Arial, sans-serif;
             overflow: hidden;
         }
 
@@ -37,7 +39,7 @@
             left: 20px;
             font-size: 1.5em;
             font-weight: bold;
-            font-family: 'Comic Sans MS', cursive;
+            font-family: 'Noto Sans', 'Comic Sans MS', cursive;
             color: #fff;
             z-index: 10;
         }
@@ -80,7 +82,7 @@
             border: none;
             padding: 10px 20px;
             font-size: 1.5em;
-            font-family: 'Comic Sans MS', cursive;
+            font-family: 'Noto Sans', 'Comic Sans MS', cursive;
             border-radius: 8px;
             cursor: pointer;
             transition: transform 0.2s;
@@ -138,11 +140,21 @@
         let mouseX = 0;
         let mouseY = 0;
 
+        // Mouse events
         window.addEventListener('mousemove', function(e) {
             mouseX = e.clientX;
             mouseY = e.clientY;
             createDrop(mouseX, mouseY);
         });
+
+        // Touch events for mobile devices
+        window.addEventListener('touchmove', function(e) {
+            e.preventDefault(); // Prevent scrolling
+            let touch = e.touches[0];
+            mouseX = touch.clientX;
+            mouseY = touch.clientY;
+            createDrop(mouseX, mouseY);
+        }, {passive: false});
 
         function createDrop(x, y) {
             drops.push({
