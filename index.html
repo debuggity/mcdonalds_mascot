@@ -14,6 +14,7 @@
             margin: 0;
             font-family: 'Noto Sans', Arial, sans-serif;
             overflow: hidden;
+            position: relative; /* Ensure positioning context for absolute elements */
         }
 
         /* Centered video styling */
@@ -74,7 +75,6 @@
             transform: scaleX(1); /* Expand underline on hover */
         }
 
-
         /* Buy button styling */
         .buy-button {
             margin-right: 20px;
@@ -115,7 +115,7 @@
         /* Text reveal styling */
         .text-reveal {
             position: absolute;
-            bottom: 20px;
+            bottom: 60px; /* Adjusted to make space for social icons */
             width: 100%;
             text-align: center;
             font-family: 'Noto Sans', 'Comic Sans MS', Arial, sans-serif;
@@ -124,6 +124,9 @@
             z-index: 10;
             letter-spacing: 0.1em;
             user-select: none; /* Prevents text selection */
+            padding: 0 10px; /* Add padding for better readability on mobile */
+            box-sizing: border-box;
+            margin-bottom: 25px;
         }
 
         .text-reveal span {
@@ -135,6 +138,47 @@
             to {
                 opacity: 1;
             }
+        }
+
+        /* Social Icons at the Bottom */
+        .social-icons {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 15px;
+            z-index: 10;
+        }
+
+        .social-icon {
+            width: 40px;
+            height: 40px;
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            border: none;
+            cursor: pointer;
+            transition: transform 0.3s ease, opacity 0.3s ease;
+            opacity: 0.75; /* Subtle visibility */
+        }
+
+        .social-icon:hover {
+            transform: scale(1.3);
+            opacity: 1;
+        }
+
+        /* Specific icon backgrounds */
+        .social-icon.x {
+            background-image: url('x.webp');
+        }
+
+        .social-icon.tg {
+            background-image: url('tg.webp');
+        }
+
+        .social-icon.dex {
+            background-image: url('dex.webp');
         }
 
         /* Responsive styling */
@@ -160,6 +204,18 @@
 
             .text-reveal {
                 font-size: 1.5em;
+                bottom: 80px; /* Ensure space above social icons */
+            }
+
+            /* Adjust social icons for smaller screens */
+            .social-icons {
+                gap: 10px;
+                bottom: 15px;
+            }
+
+            .social-icon {
+                width: 30px;
+                height: 30px;
             }
         }
     </style>
@@ -179,6 +235,13 @@
 
         <!-- Text Reveal -->
         <div class="text-reveal"></div>
+
+        <!-- Social Icons at the Bottom -->
+        <div class="social-icons">
+            <a href="https://twitter.com/McDNewMascot" target="_blank" class="social-icon x" aria-label="X"></a>
+            <a href="https://t.me/McDMascot" target="_blank" class="social-icon tg" aria-label="Telegram"></a>
+            <a href="https://dexscreener.com/solana/d4mupeifgk6kzee2fnrk6mtwovtbvhvg7umj7kbh5n8u" target="_blank" class="social-icon dex" aria-label="DEX"></a>
+        </div>
     </div>
 
     <!-- Canvas for Coffee Trail -->
