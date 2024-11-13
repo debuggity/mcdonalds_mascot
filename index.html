@@ -35,6 +35,8 @@
         /* Title styling */
         .title {
             position: absolute;
+            margin-top: 12px;
+            margin-left: 20px;
             top: 20px;
             left: 20px;
             font-size: 1.5em;
@@ -47,33 +49,35 @@
         /* Twitter link styling */
         .twitter-link {
             color: #fff;
-            text-decoration: none;
-            font-size: 1em;
             position: relative;
+            font-size: 1em;
+            text-decoration: none; /* Remove default underline */
             transition: all 0.3s ease;
         }
 
-        /* Geometric shadow on hover */
         .twitter-link::after {
             content: '';
             position: absolute;
-            left: -5px;
-            top: -5px;
-            width: calc(100% + 10px);
-            height: calc(100% + 10px);
-            background: transparent;
-            border: 2px solid rgba(255, 255, 255, 0.5);
-            transform: skew(-10deg, -10deg);
-            opacity: 0;
-            transition: all 0.3s ease;
+            left: 0;
+            bottom: -3px; /* Adjust the gap between text and underline */
+            width: 100%;
+            height: 2px; /* Increase this value for a thicker underline */
+            background-color: rgba(255, 255, 255, 0.8); /* Adjust color for subtlety */
+            transform-origin: left;
+            transform: scaleX(0); /* Start with the underline hidden */
+            transition: transform 0.3s ease;
         }
 
         .twitter-link:hover::after {
-            opacity: 1;
+            transform: scaleX(1); /* Expand underline on hover */
         }
+
 
         /* Buy button styling */
         .buy-button {
+            margin-right: 40px;
+            margin-top: 20px;
+            width: 150px;
             position: absolute;
             top: 20px;
             right: 20px;
@@ -87,6 +91,7 @@
             cursor: pointer;
             transition: transform 0.2s;
             z-index: 10;
+            text-align: center;
             text-decoration: none; /* Remove underline */
         }
 
