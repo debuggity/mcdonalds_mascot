@@ -122,6 +122,27 @@
             transform: scale(1.1);
         }
 
+        .play-button {
+            width: 200px;
+            background-color: #fff;
+            color: #a39eee;
+            border: none;
+            padding: 15px 20px;
+            font-size: 1.5em;
+            font-family: 'Noto Sans', 'Comic Sans MS', cursive;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: transform 0.2s;
+            font-weight: 500;
+            text-align: center;
+            text-decoration: none;
+        }
+
+        .play-button:hover {
+            font-weight: 600;
+            transform: scale(1.1);
+        }
+
         .text-reveal {
             margin-top: 82px;
             font-family: 'Noto Sans', 'Comic Sans MS', Arial, sans-serif;
@@ -249,6 +270,8 @@
         <div class="video-wrapper">
             <video src="video.mp4" autoplay muted loop></video>
         </div>
+
+        <a href="game_page/game.html" target="_blank" class="play-button" style="margin-top: 20px;">Play Game • ᴗ •</a>
 
         <div class="footer">
             <div class="text-reveal"></div>

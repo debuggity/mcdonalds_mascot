@@ -1,0 +1,901 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>McCoffee Mascot Adventure</title>
+  <style>
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      background-color: #a5a4f4;
+      overflow: hidden;
+    }
+    #gameCanvas {
+      display: block;
+      margin: 0 auto;
+      background-color: #a5a4f4;
+      image-rendering: crisp-edges; /* sharp rendering */
+    }
+
+    /* Start Screen Overlay */
+    #startOverlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: #a5a4f4;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 10; /* Above canvas */
+    }
+
+    #startOverlay h1 {
+      font-size: 48px;
+      color: white;
+      margin-bottom: 20px;
+    }
+
+    #startOverlay button {
+      font-size: 24px;
+      padding: 10px 20px;
+      background-color: #ff6fec;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      color: white;
+      transition: background-color 0.3s ease;
+    }
+
+    #startOverlay button:hover {
+      background-color: #ff6fec;
+    }
+
+    /* Thematic for the game */
+    #finalOverlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      display: none; /* Hidden by default */
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 10; /* Above canvas */
+    }
+
+    #finalOverlay h1 {
+      font-size: 36px;
+      color: white;
+      margin-bottom: 20px;
+    }
+
+    #finalOverlay button {
+      font-size: 24px;
+      padding: 10px 20px;
+      background-color: #ff6fec;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      color: white;
+      transition: background-color 0.3s ease;
+    }
+
+    #finalOverlay button:hover {
+      background-color: #ff6fec;
+    }
+
+    /* Score and lives styling */
+    #scoreDisplay {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      font-size: 28px;
+      font-weight: bold;
+      color: #ff6fec; /* green */
+      z-index: 5;
+      background: rgba(255,255,255,0.2);
+      padding: 10px;
+      border-radius: 5px;
+    }
+
+    #livesDisplay {
+      position: absolute;
+      top: 18px;
+      left: 100px;
+      font-size: 28px;
+      font-weight: bold;
+      color: #ff0000; /* red hearts */
+      z-index: 5;
+      background: rgba(255,255,255,0.2);
+      padding: 10px;
+      border-radius: 5px;
+    }
+
+    /* Effects styling */
+    .effect {
+      position: absolute;
+      font-size: 24px;
+      font-weight: bold;
+      color: #d283e2; /* default green text color for items */
+      opacity: 1;
+      transition: opacity 0.5s;
+      pointer-events: none;
+    }
+
+    .buy-button {
+        width: 150px;
+        background-color: #fff;
+        color: #a39eee;
+        border: none;
+        padding: 10px 20px;
+        font-size: 1.5em;
+        font-family: 'Noto Sans', 'Comic Sans MS', cursive;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: transform 0.2s;
+        font-weight: 500;
+        text-align: center;
+        text-decoration: none;
+    }
+
+    .buy-button:hover {
+        font-weight: 600;
+        transform: scale(1.1);
+    }
+
+    /* Adjust the header to space items to the left and right */
+    .header {
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 30px 30px; /* Adjust padding to reduce vertical space */
+        box-sizing: border-box;
+        position: fixed; /* Fixed position to stay at the top of the window */
+        top: 0; /* Align to the top of the window */
+        left: 0;
+        z-index: 10; /* Ensure it stays above other elements */
+        background-color: rgba(165, 164, 244, 0.9); /* Optional: semi-transparent background */
+    }
+
+
+    /* Styling for the Home button */
+    .home-button {
+        width: 150px;
+        background-color: #fff;
+        color: #a39eee;
+        border: none;
+        padding: 10px 20px;
+        font-size: 1.5em;
+        font-family: 'Noto Sans', 'Comic Sans MS', cursive;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: transform 0.2s;
+        font-weight: 500;
+        text-align: center;
+        text-decoration: none;
+    }
+
+    .home-button:hover {
+        font-weight: 600;
+        transform: scale(1.1);
+    }
+
+  </style>
+</head>
+<body>
+
+<div id="startOverlay">
+
+  <div class="header">
+    <a href="../index.html" class="home-button">Home</a>
+    <a href="https://jup.ag/swap/SOL-GRPCZZzvLPweJsYxgjVoXPfEYbxxW6Fda54Rx9aWpump" target="_blank" class="buy-button">BUY • ᴗ •</a>
+  </div>  
+
+  <h1>McCoffee Mascot Adventure</h1>
+  <button id="playButton">Play Game</button>
+  <img src="mascot.webp" alt="Mascot" width="100" style="margin-top: 20px;">
+</div>
+
+<div id="finalOverlay">
+  <h1 id="finalMessage"></h1>
+  <button id="playAgainButton">Play Again</button>
+</div>
+
+<div id="scoreDisplay"></div>
+<div id="livesDisplay"></div>
+
+<canvas id="gameCanvas"></canvas>
+
+<script>
+// Game: McCoffee Mascot Adventure
+// Updated with a new UI: Start/End overlays, ephemeral effects for scoring and hits, updated score and lives display, consistent theming.
+
+// ----- Setup -----
+const canvas = document.getElementById('gameCanvas');
+const ctx = canvas.getContext('2d');
+
+// UI elements
+const startOverlay = document.getElementById('startOverlay');
+const finalOverlay = document.getElementById('finalOverlay');
+const finalMessage = document.getElementById('finalMessage');
+const playButton = document.getElementById('playButton');
+const playAgainButton = document.getElementById('playAgainButton');
+const scoreDisplay = document.getElementById('scoreDisplay');
+const livesDisplay = document.getElementById('livesDisplay');
+
+playButton.addEventListener('click', startGame);
+playAgainButton.addEventListener('click', () => {
+  document.location.reload();
+});
+
+// Default reference dimensions for scaling (original game design)
+const GAME_WIDTH = 1200;
+const GAME_HEIGHT = 1200;
+
+// Update canvas size to fill the window while maintaining the game's aspect ratio (4:3)
+function updateCanvasSize() {
+  const windowAspect = window.innerWidth / window.innerHeight;
+  const gameAspect = GAME_WIDTH / GAME_HEIGHT;
+
+  if (windowAspect < gameAspect) {
+    // Window is relatively tall, so use full width
+    canvas.width = window.innerWidth;
+    canvas.height = canvas.width / gameAspect;
+  } else {
+    // Window is relatively wide, so use full height
+    canvas.height = window.innerHeight;
+    canvas.width = canvas.height * gameAspect;
+  }
+
+  // Reset transformation scaling to default before further transformations
+  ctx.resetTransform();
+}
+window.addEventListener('resize', updateCanvasSize);
+updateCanvasSize();
+
+
+// Constants for the game
+let lastTime = 0;
+const BACKGROUND_COLOR = "#a5a4f4";
+const CAMERA_ZOOM = 2; // 2x zoom
+
+// Asset image sources
+const MASCOT_SRC = 'mascot.webp';
+const ITEMS_SRC = ['m1.webp', 'm2.webp', 'm3.webp', 'm4.webp', 'm5.webp'];
+const ASTEROID_SRC = 'asteroids.png'; // sprite sheet
+const ASTEROID_COLS = 4; // asteroids sprite sheet columns
+const ASTEROID_ROWS = 4; // asteroids sprite sheet rows
+const ASTEROID_COUNT = 16; // total asteroid images in sheet
+
+// Classes and game data
+// Load images
+const mascotImage = new Image();
+mascotImage.src = MASCOT_SRC;
+
+// Item images and dimension caching
+let itemImages = [];
+ITEMS_SRC.forEach(src => {
+  const img = new Image();
+  img.src = src;
+  itemImages.push(img);
+});
+
+// Asteroid image
+const asteroidImage = new Image();
+asteroidImage.src = ASTEROID_SRC;
+
+// Start the game after pressing "Play Game"
+function startGame() {
+  startOverlay.style.display = 'none';
+  createItems();
+  createAsteroids();
+  requestAnimationFrame(gameLoop);
+}
+
+// Ephemeral effects like "+10" or "-❤️"
+class Effect {
+  constructor(text, x, y, color) {
+    this.text = text;
+    this.x = x;
+    this.y = y;
+    this.color = color;
+    this.lifeTime = 100; // frames to live
+    this.opacity = 1;
+  }
+
+  update() {
+    this.y -= 0.5; // float upwards
+    this.lifeTime--;
+    this.opacity = this.lifeTime / 60;
+  }
+
+  draw() {
+    if (this.lifeTime <= 0) return;
+    ctx.save();
+    ctx.globalAlpha = this.opacity;
+    ctx.fillStyle = this.color;
+    ctx.font = '24px Arial';
+    ctx.fillText(this.text, this.x, this.y);
+    ctx.restore();
+  }
+}
+
+// Coffee Particles
+class CoffeeParticle {
+  constructor(x, y, directionAngle) {
+    this.x = x;
+    this.y = y;
+    // The particle moves in the opposite direction of the mascot's velocity
+    this.speed = 2 + Math.random() * 2;
+    this.angle = directionAngle + Math.PI;
+    this.lifeTime = 30 + Math.floor(Math.random() * 20);
+    this.radius = 3 + Math.random() * 3;
+    this.opacity = 1;
+  }
+
+  update() {
+    this.x += Math.cos(this.angle) * this.speed;
+    this.y += Math.sin(this.angle) * this.speed;
+    this.lifeTime--;
+    this.opacity = this.lifeTime / 50; // fade out
+  }
+
+  draw() {
+    if (this.lifeTime <= 0) return;
+    ctx.save();
+    ctx.translate(this.x, this.y);
+    ctx.beginPath();
+    ctx.globalAlpha = Math.max(this.opacity, 0);
+    ctx.arc(0, 0, this.radius, 0, Math.PI * 2, false);
+    ctx.fillStyle = '#6F4E37'; // coffee color
+    ctx.fill();
+    ctx.restore();
+  }
+}
+
+// For the main character (McCoffee Mascot)
+class Mascot {
+  constructor() {
+    // Position the mascot at center
+    this.x = GAME_WIDTH / 2;
+    this.y = GAME_HEIGHT / 2;
+    this.width = 55;
+    this.height = 50;
+    this.angle = 0; // current facing angle in radians
+    this.velocityX = 0;
+    this.velocityY = 0;
+    this.rotationSpeed = 0.035; // how fast to rotate on key press
+    this.acceleration = 0.1;
+    this.friction = 0.9905; // friction factor for space-like movement
+  }
+
+  update() {
+    // Apply friction
+    this.velocityX *= this.friction;
+    this.velocityY *= this.friction;
+
+    // Update position based on current velocity
+    this.x += this.velocityX;
+    this.y += this.velocityY;
+
+    // If out of boundaries, wrap around to simulate space environment
+    if (this.x < 0) this.x = GAME_WIDTH;
+    if (this.x > GAME_WIDTH) this.x = 0;
+    if (this.y < 0) this.y = GAME_HEIGHT;
+    if (this.y > GAME_HEIGHT) this.y = 0;
+
+    // Generate coffee particles if the mascot is moving significantly
+    let speed = Math.sqrt(this.velocityX ** 2 + this.velocityY ** 2);
+    if (speed > 0.5) {
+      const movementAngle = Math.atan2(this.velocityY, this.velocityX);
+      // Offset the particle starting position to the rear of the mascot
+      const offsetX = Math.cos(this.angle) * (this.height / 2);
+      const offsetY = Math.sin(this.angle) * (this.height / 2);
+      for (let i = 0; i < 2; i++) { // generate multiple particles for a denser effect
+        coffeeParticles.push(
+          new CoffeeParticle(
+            this.x - offsetX,
+            this.y - offsetY,
+            movementAngle
+          )
+        );
+      }
+    }
+  }
+
+  draw() {
+    // Draw the mascot
+    ctx.save();
+    ctx.translate(this.x, this.y);
+    ctx.rotate(this.angle);
+    ctx.drawImage(
+      mascotImage,
+      -this.width / 2,
+      -this.height / 2,
+      this.width,
+      this.height
+    );
+    ctx.restore();
+  }
+
+  rotateLeft() {
+    this.angle -= this.rotationSpeed;
+  }
+
+  rotateRight() {
+    this.angle += this.rotationSpeed;
+  }
+
+  thrustForward() {
+    this.velocityX += Math.cos(this.angle) * this.acceleration;
+    this.velocityY += Math.sin(this.angle) * this.acceleration;
+  }
+
+  thrustBackward() {
+    this.velocityX -= Math.cos(this.angle) * this.acceleration * 0.5;
+    this.velocityY -= Math.sin(this.angle) * this.acceleration * 0.5;
+  }
+}
+
+// Initialize Mascot
+const mascot = new Mascot();
+
+// Coffee Shots
+class CoffeeShot {
+  constructor(x, y, angle) {
+    this.x = x;
+    this.y = y;
+    this.angle = angle;
+    this.speed = 8;
+    this.radius = 5;
+    this.lifeTime = 100; // frames until it disappears
+  }
+
+  update() {
+    this.x += Math.cos(this.angle) * this.speed;
+    this.y += Math.sin(this.angle) * this.speed;
+    this.lifeTime--;
+
+    // Wrap around if out of boundary for consistent space effect
+    if (this.x < 0) this.x = GAME_WIDTH;
+    if (this.x > GAME_WIDTH) this.x = 0;
+    if (this.y < 0) this.y = GAME_HEIGHT;
+    if (this.y > GAME_HEIGHT) this.y = 0;
+  }
+
+  draw() {
+    if (this.lifeTime <= 0) return;
+    ctx.save();
+    ctx.translate(this.x, this.y);
+    ctx.rotate(this.angle);
+    ctx.beginPath();
+    let gradient = ctx.createRadialGradient(0, 0, 0, 0, 0, this.radius);
+    gradient.addColorStop(0, '#6F4E37'); // coffee color
+    gradient.addColorStop(1, 'transparent');
+    ctx.fillStyle = gradient;
+    ctx.arc(0, 0, this.radius, 0, Math.PI * 2, false);
+    ctx.fill();
+    ctx.restore();
+  }
+}
+
+let coffeeShots = [];
+
+// Items to collect
+class Item {
+  constructor(image, itemWidth, itemHeight) {
+    this.image = image;
+    // Items are about 1/3 the size of the mascot (mascot width=50)
+    this.width = 80; // about 16.67
+    // Maintain aspect ratio
+    let aspectRatio = image.naturalWidth / image.naturalHeight;
+    this.height = this.width / aspectRatio;
+
+    this.x = Math.random() * (GAME_WIDTH - this.width) + this.width / 2;
+    this.y = Math.random() * (GAME_HEIGHT - this.height) + this.height / 2;
+    this.angle = Math.random() * Math.PI * 2;
+    this.rotationSpeed = 0.001 + Math.random() * 0.002;
+    this.speedX = Math.random() * 2 - 1;
+    this.speedY = Math.random() * 2 - 1;
+  }
+
+  update() {
+    // Move and rotate item slowly
+    this.angle += this.rotationSpeed;
+    this.x += this.speedX * 0.5;
+    this.y += this.speedY * 0.5;
+
+    // Wrap around the edges
+    if (this.x < 0) this.x = GAME_WIDTH;
+    if (this.x > GAME_WIDTH) this.x = 0;
+    if (this.y < 0) this.y = GAME_HEIGHT;
+    if (this.y > GAME_HEIGHT) this.y = 0;
+  }
+
+  draw() {
+    ctx.save();
+    ctx.translate(this.x, this.y);
+    ctx.rotate(this.angle);
+    ctx.drawImage(
+      this.image,
+      -this.width / 2,
+      -this.height / 2,
+      this.width,
+      this.height
+    );
+    ctx.restore();
+  }
+
+  getCollisionBounds() {
+    return {
+      x: this.x,
+      y: this.y,
+      width: this.width,
+      height: this.height
+    };
+  }
+}
+
+let items = [];
+
+// Asteroids
+class Asteroid {
+  constructor() {
+    this.width = 30;
+    this.height = 30;
+    this.x = Math.random() * GAME_WIDTH;
+    this.y = Math.random() * GAME_HEIGHT;
+    this.speedX = Math.random() * 2 - 1;
+    this.speedY = Math.random() * 2 - 1;
+    this.frame = Math.floor(Math.random() * ASTEROID_COUNT);
+    this.angle = Math.random() * Math.PI * 2;
+    this.rotationSpeed = (Math.random() - 0.5) * 0.05;
+    this.hitboxRatio = 0.4; // Asteroids have a smaller hitbox (half size)
+  }
+
+  update() {
+    // Move asteroid
+    this.x += this.speedX * 0.5;
+    this.y += this.speedY * 0.5;
+    this.angle += this.rotationSpeed;
+
+    // Wrap around edges
+    if (this.x < 0) this.x = GAME_WIDTH;
+    if (this.x > GAME_WIDTH) this.x = 0;
+    if (this.y < 0) this.y = GAME_HEIGHT;
+    if (this.y > GAME_HEIGHT) this.y = 0;
+  }
+
+  draw() {
+    let row = Math.floor(this.frame / ASTEROID_COLS);
+    let col = this.frame % ASTEROID_COLS;
+    let spriteWidth = asteroidImage.width / ASTEROID_COLS;
+    let spriteHeight = asteroidImage.height / ASTEROID_ROWS;
+    ctx.save();
+    ctx.translate(this.x, this.y);
+    ctx.rotate(this.angle);
+    ctx.drawImage(
+      asteroidImage,
+      col * spriteWidth,
+      row * spriteHeight,
+      spriteWidth,
+      spriteHeight,
+      -this.width / 2,
+      -this.height / 2,
+      this.width,
+      this.height
+    );
+    ctx.restore();
+  }
+
+  // Adjusted collision dimension
+  getCollisionBounds() {
+    return {
+      x: this.x,
+      y: this.y,
+      width: this.width * this.hitboxRatio,
+      height: this.height * this.hitboxRatio
+    };
+  }
+}
+
+let asteroids = [];
+
+// Initialize items and asteroids
+function createItems() {
+  const safeZoneRadius = 100; // Defines how far items should be from the mascot
+  while (items.length < 5) {
+    let item;
+    let positionSafe = false;
+    while (!positionSafe) {
+      const randomItemImage = itemImages[Math.floor(Math.random() * itemImages.length)];
+      if (randomItemImage && randomItemImage.naturalWidth > 0) {
+        item = new Item(randomItemImage, randomItemImage.naturalWidth, randomItemImage.naturalHeight);
+        const distanceFromMascot = Math.sqrt((item.x - mascot.x) ** 2 + (item.y - mascot.y) ** 2);
+        if (distanceFromMascot > safeZoneRadius) {
+          positionSafe = true;
+        }
+      }
+    }
+    items.push(item);
+  }
+}
+
+function createAsteroids() {
+  const safeZoneRadius = 100; // Defines how far asteroids should be from the mascot
+  while (asteroids.length < 5) {
+    let asteroid;
+    let positionSafe = false;
+    while (!positionSafe) {
+      asteroid = new Asteroid();
+      const distanceFromMascot = Math.sqrt((asteroid.x - mascot.x) ** 2 + (asteroid.y - mascot.y) ** 2);
+      if (distanceFromMascot > safeZoneRadius) {
+        positionSafe = true;
+      }
+    }
+    asteroids.push(asteroid);
+  }
+}
+
+// Collision detection (simple rectangular approximation)
+function isColliding(aBounds, bBounds) {
+  return !(
+    (aBounds.x + aBounds.width / 2 < bBounds.x - bBounds.width / 2) ||
+    (aBounds.x - aBounds.width / 2 > bBounds.x + bBounds.width / 2) ||
+    (aBounds.y + aBounds.height / 2 < bBounds.y - bBounds.height / 2) ||
+    (aBounds.y - aBounds.height / 2 > bBounds.y + bBounds.height / 2)
+  );
+}
+
+// Score and Lives
+let score = 0;
+let lives = 3;
+let coffeeParticles = [];
+let effects = [];
+
+// Key handling
+let keys = {};
+document.addEventListener('keydown', (e) => {
+  keys[e.key.toLowerCase()] = true;
+});
+document.addEventListener('keyup', (e) => {
+  keys[e.key.toLowerCase()] = false;
+});
+
+// Update game objects
+function updateGame() {
+  // Update mascot controls
+  if (keys['arrowleft'] || keys['a']) {
+    mascot.rotateLeft();
+  }
+  if (keys['arrowright'] || keys['d']) {
+    mascot.rotateRight();
+  }
+  if (keys['arrowup'] || keys['w']) {
+    mascot.thrustForward();
+  }
+  if (keys['arrowdown'] || keys['s']) {
+    mascot.thrustBackward();
+  }
+  
+  // Shoot coffee with space
+  if (keys[' ']) {
+    // Limit coffee shot rate
+    if (coffeeShots.length < 5) {
+      coffeeShots.push(
+        new CoffeeShot(
+          mascot.x,
+          mascot.y,
+          mascot.angle
+        )
+      );
+    }
+  }
+
+  // Update and check collisions for items
+  for (let i = items.length - 1; i >= 0; i--) {
+    items[i].update();
+    // Check for collection
+    const mascotBounds = { x: mascot.x, y: mascot.y, width: mascot.width, height: mascot.height };
+    const itemBounds = items[i].getCollisionBounds();
+    if (isColliding(mascotBounds, itemBounds)) {
+      // Item collected
+      items.splice(i, 1);
+      score += 10;
+      effects.push(new Effect(`+10`, mascot.x, mascot.y - 20, '#00FF00')); // green text above mascot
+    }
+  }
+
+  // Update coffee shots
+  for (let i = coffeeShots.length - 1; i >= 0; i--) {
+    coffeeShots[i].update();
+    if (coffeeShots[i].lifeTime <= 0) {
+      coffeeShots.splice(i, 1);
+      continue;
+    }
+  }
+
+  // Update asteroids
+  for (let i = 0; i < asteroids.length; i++) {
+    asteroids[i].update();
+    // Check collision with mascot
+    const mascotBounds = { x: mascot.x, y: mascot.y, width: mascot.width, height: mascot.height };
+    const asteroidBounds = asteroids[i].getCollisionBounds();
+    if (isColliding(mascotBounds, asteroidBounds)) {
+      lives -= 1;
+      effects.push(new Effect(`-❤️`, mascot.x, mascot.y - 20, '#FF0000')); // red text above mascot
+      // Reset asteroid position
+      asteroids[i].x = Math.random() * GAME_WIDTH;
+      asteroids[i].y = Math.random() * GAME_HEIGHT;
+      if (lives <= 0) {
+        gameOver();
+      }
+    }
+
+    // Check collision with coffee shots
+    for (let j = coffeeShots.length - 1; j >= 0; j--) {
+      let dx = coffeeShots[j].x - asteroids[i].x;
+      let dy = coffeeShots[j].y - asteroids[i].y;
+      let distance = Math.sqrt(dx * dx + dy * dy);
+      // Considering half of asteroid's bounding box for more accuracy
+      let asteroidRadius = (asteroids[i].width * asteroids[i].hitboxRatio) / 2;
+      if (distance < (asteroidRadius + coffeeShots[j].radius)) {
+        // Shot hits asteroid
+        score += 5;
+        effects.push(new Effect(`+5`, asteroids[i].x, asteroids[i].y - 20, '#00FF00')); // green text above asteroid
+        // Reset asteroid position
+        asteroids[i].x = Math.random() * GAME_WIDTH;
+        asteroids[i].y = Math.random() * GAME_HEIGHT;
+        coffeeShots.splice(j, 1);
+      }
+    }
+  }
+
+  // Update mascot
+  mascot.update();
+
+  // Update coffee particles
+  for (let i = coffeeParticles.length - 1; i >= 0; i--) {
+    coffeeParticles[i].update();
+    if (coffeeParticles[i].lifeTime <= 0 || coffeeParticles[i].opacity <= 0) {
+      coffeeParticles.splice(i, 1);
+    }
+  }
+
+  // Update effects
+  for (let i = effects.length - 1; i >= 0; i--) {
+    effects[i].update();
+    if (effects[i].lifeTime <= 0) {
+      effects.splice(i, 1);
+    }
+  }
+
+  // If items array is empty, add new items
+  if (items.length < 5) {
+    createItems();
+  }
+
+  // If asteroids array is less than 5, add new asteroids
+  if (asteroids.length < 5) {
+    createAsteroids();
+  }
+}
+
+function drawGame() {
+  // Clear the entire canvas area with its actual pixel dimensions
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  // Fill the entire background
+  ctx.fillStyle = BACKGROUND_COLOR;
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  // Save the current context state before scaling and translating
+  ctx.save();
+  
+  // The scaling must match the window scale and the zoom factor
+  const scaleFactorX = (canvas.width / GAME_WIDTH) * CAMERA_ZOOM;
+  const scaleFactorY = (canvas.height / GAME_HEIGHT) * CAMERA_ZOOM;
+  ctx.scale(scaleFactorX, scaleFactorY);
+
+  // Calculate the offset so the mascot appears at the center of the screen
+  const screenCenterX = (GAME_WIDTH / 2) / CAMERA_ZOOM;
+  const screenCenterY = (GAME_HEIGHT / 2) / CAMERA_ZOOM;
+  ctx.translate(
+    -mascot.x + screenCenterX,
+    -mascot.y + screenCenterY
+  );
+
+  // Draw the visible wrap-around border inside the game area
+  ctx.save();
+  ctx.lineWidth = 8; // Thickness of the wrap-around border
+  ctx.strokeStyle = "#8a2be2"; // Neon purple border color
+  ctx.shadowBlur = 15;
+  ctx.shadowColor = "#8a2be2";
+  ctx.strokeRect(0, 0, GAME_WIDTH, GAME_HEIGHT); // Draw border for wrap-around area
+  ctx.restore();
+
+  // Draw items
+  for (let i = 0; i < items.length; i++) {
+    items[i].draw();
+  }
+
+  // Draw asteroids
+  for (let i = 0; i < asteroids.length; i++) {
+    asteroids[i].draw();
+  }
+
+  // Draw coffee shots
+  for (let i = 0; i < coffeeShots.length; i++) {
+    coffeeShots[i].draw();
+  }
+
+  // Draw coffee particles behind the mascot
+  for (let i = 0; i < coffeeParticles.length; i++) {
+    coffeeParticles[i].draw();
+  }
+
+  // Draw mascot
+  mascot.draw();
+
+  // Restore context to normal (without camera transforms)
+  ctx.restore();
+
+  // Draw ephemeral effects on top of all other elements
+  for (let i = 0; i < effects.length; i++) {
+    // Convert effect coordinates to screen coordinates without camera transformations
+    let effectScreenX = (effects[i].x - mascot.x + GAME_WIDTH / 2) * (canvas.width / GAME_WIDTH);
+    let effectScreenY = (effects[i].y - mascot.y + GAME_HEIGHT / 2) * (canvas.height / GAME_HEIGHT);
+
+    ctx.save();
+    ctx.globalAlpha = effects[i].opacity;
+    ctx.fillStyle = effects[i].color;
+    ctx.font = 'bold 32px Arial';
+    ctx.fillText(effects[i].text, effectScreenX, effectScreenY);
+    ctx.restore();
+  }
+
+  // Update the UI displays for score and lives
+  updateDisplays();
+}
+
+
+
+// Update UI displays
+function updateDisplays() {
+  // Display score in green
+  scoreDisplay.textContent = `$${score}`;
+  // Display lives as hearts
+  livesDisplay.textContent = `${'❤️'.repeat(lives)}`;
+}
+
+// Game Over 
+function gameOver() {
+  finalMessage.textContent = `Game Over! You scored ${score} points.`;
+  finalOverlay.style.display = 'flex';
+}
+
+// Game Loop using requestAnimationFrame
+function gameLoop(timestamp) {
+  let deltaTime = timestamp - lastTime;
+  lastTime = timestamp;
+  
+  updateGame();
+  drawGame();
+  
+  if (lives > 0) {
+    requestAnimationFrame(gameLoop);
+  }
+}
+
+// The game starts when "Play Game" is pressed, so no initial call to gameLoop here
+</script>
+</body>
+</html>
